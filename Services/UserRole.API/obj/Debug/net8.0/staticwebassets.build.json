@@ -1,11 +1,58 @@
 {
   "Version": 1,
-  "Hash": "twPfVAXS4OY2pLZFj7yMBaDtCOHppWWeZIBeEl+3xoU=",
+  "Hash": "NIksuEr9GRDeouQZ2Y1BknswZXxOqVT62UzT1qwwGPQ=",
   "Source": "UserRoleAPI",
   "BasePath": "_content/UserRoleAPI",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "UserRoleAPI\\wwwroot",
+      "Source": "UserRoleAPI",
+      "ContentRoot": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\wwwroot\\",
+      "BasePath": "_content/UserRoleAPI",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\wwwroot\\images\\profile\\07f10d20-9be3-416c-ac07-60faae58fe96.JPG",
+      "SourceId": "UserRoleAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\wwwroot\\",
+      "BasePath": "_content/UserRoleAPI",
+      "RelativePath": "images/profile/07f10d20-9be3-416c-ac07-60faae58fe96.JPG",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\profile\\07f10d20-9be3-416c-ac07-60faae58fe96.JPG"
+    },
+    {
+      "Identity": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\wwwroot\\images\\profile\\9ee245d0-9ec3-4603-9f24-0b4fe0750346.JPG",
+      "SourceId": "UserRoleAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\wwwroot\\",
+      "BasePath": "_content/UserRoleAPI",
+      "RelativePath": "images/profile/9ee245d0-9ec3-4603-9f24-0b4fe0750346.JPG",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\profile\\9ee245d0-9ec3-4603-9f24-0b4fe0750346.JPG"
+    }
+  ]
 }

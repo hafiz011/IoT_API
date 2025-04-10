@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\wwwroot\\images\\profile\\07f10d20-9be3-416c-ac07-60faae58fe96.JPG",
+      "PackagePath": "staticwebassets\\images\\profile\\07f10d20-9be3-416c-ac07-60faae58fe96.JPG"
+    },
+    {
+      "Id": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\wwwroot\\images\\profile\\9ee245d0-9ec3-4603-9f24-0b4fe0750346.JPG",
+      "PackagePath": "staticwebassets\\images\\profile\\9ee245d0-9ec3-4603-9f24-0b4fe0750346.JPG"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.UserRoleAPI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.UserRoleAPI.props",
+      "PackagePath": "build\\UserRoleAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.UserRoleAPI.props",
+      "PackagePath": "buildMultiTargeting\\UserRoleAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.UserRoleAPI.props",
+      "PackagePath": "buildTransitive\\UserRoleAPI.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

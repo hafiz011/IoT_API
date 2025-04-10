@@ -9,9 +9,9 @@ using UserRoleAPI.Models;
 
 namespace WebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -42,6 +42,7 @@ namespace WebApp.Controllers
             return Ok(users);
         }
 
+
         // GET: api/admin/user/{id}
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetUserById(string id)
@@ -69,7 +70,7 @@ namespace WebApp.Controllers
 
         // POST: api/admin/create-role
         [HttpPost("create-role")]
-        public async Task<IActionResult> CreateRole(string roleName, string description)
+        public async Task<IActionResult> CreateRole([FromQuery] string roleName, [FromQuery] string description)
         {
             if (await _roleManager.RoleExistsAsync(roleName))
                 return BadRequest(new { Message = "Role already exists" });
@@ -81,16 +82,16 @@ namespace WebApp.Controllers
             };
 
             var result = await _roleManager.CreateAsync(role);
-            if (result.Succeeded)
-                return Ok(new { Message = "Role created successfully" });
+            if (!result.Succeeded)
+                return BadRequest(new { Errors = result.Errors });
 
-            return BadRequest(result.Errors);
+            return Ok(new { Message = "Role created successfully" });
         }
 
 
         // POST: api/admin/assign-role
         [HttpPost("assign-role")]
-        public async Task<IActionResult> AssignRoleToUser(string userId, string roleName)
+        public async Task<IActionResult> AssignRoleToUser([FromQuery] string userId, [FromQuery] string roleName)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -106,25 +107,29 @@ namespace WebApp.Controllers
             return BadRequest(result.Errors);
         }
 
-
-        // DELETE: api/admin/delete-user/{id}
-        [HttpDelete("delete-user/{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        // POST: api/admin/remove-role
+        [HttpPost("remove-role")]
+        public async Task<IActionResult> RemoveRoleFromUser([FromQuery] string userId, [FromQuery] string roleName)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return NotFound(new { Message = "User not found" });
 
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
+            if (!await _userManager.IsInRoleAsync(user, roleName))
+                return BadRequest(new { Message = "User does not have this role." });
 
-            return Ok(new { Message = "User deleted successfully" });
+            var result = await _userManager.RemoveFromRoleAsync(user, roleName);
+            if (!result.Succeeded)
+                return BadRequest(new { Errors = result.Errors });
+
+            return Ok(new { Message = "Role removed from user." });
         }
+
+
 
         // POST: api/admin/disable-login
         [HttpPost("disable-login")]
-        public async Task<IActionResult> DisableLogin([FromBody] string userId)
+        public async Task<IActionResult> DisableLogin([FromQuery] string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -145,7 +150,7 @@ namespace WebApp.Controllers
 
         // POST: api/admin/enable-login
         [HttpPost("enable-login")]
-        public async Task<IActionResult> EnableLogin([FromBody] string userId)
+        public async Task<IActionResult> EnableLogin([FromQuery] string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -164,22 +169,21 @@ namespace WebApp.Controllers
             return BadRequest(new { Message = $"Failed to enable login for user '{user.UserName}'." });
         }
 
-        [HttpPost("remove-role")]
-        public async Task<IActionResult> RemoveRoleFromUser(string userId, string roleName)
+        // DELETE: api/admin/delete-user/{id}
+        [HttpDelete("delete-user/{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
-                return NotFound(new { Message = "User not found." });
+                return NotFound(new { Message = "User not found" });
 
-            if (!await _userManager.IsInRoleAsync(user, roleName))
-                return BadRequest(new { Message = "User does not have this role." });
-
-            var result = await _userManager.RemoveFromRoleAsync(user, roleName);
+            var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return Ok(new { Message = "Role removed from user." });
+            return Ok(new { Message = "User deleted successfully" });
         }
+
 
     }
 

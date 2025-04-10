@@ -82,8 +82,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
+app.UseAuthentication(); // This should be before UseAuthorization
 app.UseAuthorization();
-app.UseAuthentication();
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 

@@ -139,8 +139,11 @@ namespace UserRoleAPI.Controllers
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
+            // URL-encode the token and assign it back to the variable
+            var encodedToken = WebUtility.UrlEncode(token);
+
             var confirmationLink = Url.Action("ConfirmEmail", "Auth",
-                   new { userId = user.Id, token }, Request.Scheme);
+                new { userId = user.Id, token = encodedToken }, Request.Scheme);
 
             bool emailSent = await _emailService.SendEmailAsync(user.Email, "Confirm your email",
                 $"Please confirm your account by clicking this link: <a href='{confirmationLink}'>Confirm Email</a>");
@@ -152,14 +155,14 @@ namespace UserRoleAPI.Controllers
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(ConfirmEmailModel model)
+        public async Task<IActionResult> ConfirmEmail(string UserId, string Token)
         {
-            if (string.IsNullOrEmpty(model.UserId) || string.IsNullOrEmpty(model.Token))
+            if (string.IsNullOrEmpty(UserId) || string.IsNullOrEmpty(Token))
             {
                 return BadRequest(new { Message = "Invalid confirmation request. User ID and Token are required." });
             }
 
-            var user = await _userManager.FindByIdAsync(model.UserId);
+            var user = await _userManager.FindByIdAsync(UserId);
             if (user == null)
             {
                 return NotFound(new { Message = "User not found." });
@@ -169,7 +172,7 @@ namespace UserRoleAPI.Controllers
             {
                 return Ok(new { Message = "Your email is already confirmed. You can log in now." });
             }
-            var decodedToken = WebUtility.UrlDecode(model.Token);
+            var decodedToken = WebUtility.UrlDecode(Token);
             var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
             if (!result.Succeeded)
             {
