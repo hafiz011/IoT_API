@@ -5,7 +5,9 @@ VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{03F4195A-4C68-45EE-AEDB-E248DFD8A97A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserRoleAPI", "Services\UserRole.API\UserRoleAPI.csproj", "{C556F451-3BF0-457A-8222-B2775BB57CEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserRoleAPI", "Services\UserRole.API\UserRoleAPI.csproj", "{C556F451-3BF0-457A-8222-B2775BB57CEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceAPI", "Services\DeviceAPI\DeviceAPI.csproj", "{478E8B3D-2047-4C9D-A108-6B9C42D20688}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +19,17 @@ Global
 		{C556F451-3BF0-457A-8222-B2775BB57CEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C556F451-3BF0-457A-8222-B2775BB57CEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C556F451-3BF0-457A-8222-B2775BB57CEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{478E8B3D-2047-4C9D-A108-6B9C42D20688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{478E8B3D-2047-4C9D-A108-6B9C42D20688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{478E8B3D-2047-4C9D-A108-6B9C42D20688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{478E8B3D-2047-4C9D-A108-6B9C42D20688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C556F451-3BF0-457A-8222-B2775BB57CEE} = {03F4195A-4C68-45EE-AEDB-E248DFD8A97A}
+		{478E8B3D-2047-4C9D-A108-6B9C42D20688} = {03F4195A-4C68-45EE-AEDB-E248DFD8A97A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {70F6BF45-32C0-4011-A3D7-05D86972AC31}
