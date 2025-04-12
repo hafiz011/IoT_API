@@ -37,3 +37,12 @@ D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\MongoDB.Driver.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\SharpCompress.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Snappier.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\ZstdSharp.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Certificate.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
