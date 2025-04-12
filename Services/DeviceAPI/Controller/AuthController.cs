@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using DeviceAPI.DbContext;
 
 namespace DeviceAPI.Controllers
 {
@@ -16,19 +17,23 @@ namespace DeviceAPI.Controllers
         private readonly CertificateAuthService _certAuthService;
         private readonly JwtService _jwtService;
         private readonly IMongoCollection<Device> _devices;
+        private readonly MongoDbContext _dbContext;
         private readonly ILogger<AuthController> _logger;
 
         public AuthController(
             CertificateAuthService certAuthService,
             JwtService jwtService,
             IMongoDatabase database,
+            MongoDbContext dbContext,
             ILogger<AuthController> logger)
         {
             _certAuthService = certAuthService;
             _jwtService = jwtService;
             _devices = database.GetCollection<Device>("devices");
+            _dbContext = dbContext;
             _logger = logger;
         }
+
 
         [HttpPost("device")]
         public async Task<IActionResult> AuthenticateDevice()
@@ -147,5 +152,6 @@ namespace DeviceAPI.Controllers
                 return StatusCode(500, new { Message = "Internal server error" });
             }
         }
+
     }
-}
+} 

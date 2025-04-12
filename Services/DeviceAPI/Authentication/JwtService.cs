@@ -28,7 +28,7 @@ namespace DeviceAPI.Authentication
             {
                 new Claim(JwtRegisteredClaimNames.Sub, device.DeviceId),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("deviceType", device.DeviceTypeId ?? string.Empty),
+                new Claim("deviceId", device.DeviceId ?? string.Empty),
                 new Claim("authMethod", "hybrid"),
                 new Claim(ClaimTypes.Role, "device")
             };
