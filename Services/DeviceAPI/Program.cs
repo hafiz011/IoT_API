@@ -22,16 +22,27 @@ builder.Services.AddScoped<IMongoDatabase>(sp =>
     sp.GetRequiredService<IMongoClient>()
      .GetDatabase(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("DatabaseName")));
 
+// Add certificate services
+builder.Services.Configure<CertificateSettings>(builder.Configuration.GetSection("CertificateSettings"));
+builder.Services.AddScoped<ICertificateAuthService, CertificateAuthService>();
+
 // Add authentication services
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "Hybrid";
     options.DefaultChallengeScheme = "Hybrid";
 })
+
+//.AddCertificate("Certificate", options =>
+//{
+//    options.AllowedCertificateTypes = CertificateTypes.All;
+//    options.RevocationMode = X509RevocationMode.NoCheck; // Set to Online for production
+//})
+
 .AddCertificate("Certificate", options =>
 {
     options.AllowedCertificateTypes = CertificateTypes.All;
-    options.RevocationMode = X509RevocationMode.NoCheck; // Set to Online for production
+    options.RevocationMode = X509RevocationMode.Online; // For production
 })
 .AddJwtBearer("JWT", options =>
 {

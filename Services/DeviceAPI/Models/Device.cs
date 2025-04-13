@@ -13,6 +13,7 @@ namespace DeviceAPI.Models
         public string DeviceId { get; set; } // Custom unique identifier
         public string Name { get; set; }
         public string FirmwareVersion { get; set; }
+        public string FirmwareUpdateVersion { get; set; }
         public string HardwareVersion { get; set; }
         public string SerialNumber { get; set; }
         public string MacAddress { get; set; }

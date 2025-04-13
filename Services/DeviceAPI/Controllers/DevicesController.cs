@@ -14,7 +14,7 @@ namespace DeviceAPI.Controllers
     {
         private readonly IMongoCollection<Device> _devices;
         private readonly ILogger<DevicesController> _logger;
-        private readonly CertificateAuthService _certAuthService;
+        private readonly ICertificateAuthService _certAuthService;
 
         public DevicesController(IMongoDatabase database,
             ILogger<DevicesController> logger,
@@ -76,6 +76,77 @@ namespace DeviceAPI.Controllers
             }
         }
 
+        [HttpPost("certificate/{deviceId}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateDeviceCertificate(string deviceId)
+        {
+            try
+            {
+                var device = await _devices.Find(d => d.DeviceId == deviceId).FirstOrDefaultAsync();
+                if (device == null)
+                {
+                    return NotFound(new ProblemDetails
+                    {
+                        Title = "Device not found",
+                        Detail = $"Device {deviceId} does not exist",
+                        Status = 404
+                    });
+                }
+
+                var result = await _certAuthService.CreateCertificateAsync(device);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ProblemDetails
+                {
+                    Title = "Certificate exists",
+                    Detail = ex.Message,
+                    Status = 409
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to create certificate for device {DeviceId}", deviceId);
+                return StatusCode(500, new ProblemDetails
+                {
+                    Title = "Certificate generation failed",
+                    Detail = "An error occurred while generating the certificate",
+                    Status = 500
+                });
+            }
+        }
+
+        [HttpDelete("certificate/{deviceId}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RevokeDeviceCertificate(string deviceId)
+        {
+            try
+            {
+                await _certAuthService.RevokeCertificateAsync(deviceId);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Title = "Device not found",
+                    Detail = ex.Message,
+                    Status = 404
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to revoke certificate for device {DeviceId}", deviceId);
+                return StatusCode(500, new ProblemDetails
+                {
+                    Title = "Revocation failed",
+                    Detail = "An error occurred while revoking the certificate",
+                    Status = 500
+                });
+            }
+        }
+
 
         // get device info
         [HttpGet("{id}")]
@@ -104,43 +175,6 @@ namespace DeviceAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
-
-        // Create certificate
-        [HttpPost("CreateCertificate/{id}")]
-        public async Task<IActionResult> CreateCertificate(string id)
-        {
-            try
-            {
-                var device = await _devices.Find(d => d.DeviceId == id).FirstOrDefaultAsync();
-                if (device == null)
-                {
-                    return NotFound(new { Message = $"Device with ID {id} not found" });
-                }
-                if (device.Authentication.Credentials != null)
-                {
-                    return BadRequest(new { Message = $"Device alredy have a Certificate" });
-                }
-                var result = await _certAuthService.CreateCertificateAsync(device);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error generating certificate for device {Id}", id);
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -178,15 +212,15 @@ namespace DeviceAPI.Controllers
 
         // update device location and address
         [HttpPost("location")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateLocation([FromBody] LocationUpdateDto locationUpdate)
         {
             try
             {
-                var deviceId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(deviceId))
+                var device = await _devices.Find(d => d.Id == locationUpdate.id).FirstOrDefaultAsync();
+                if (device.DeviceId == null)
                 {
-                    return Unauthorized(new { Message = "Invalid token claims" });
+                    return NotFound();
                 }
 
                 var update = Builders<Device>.Update
@@ -199,9 +233,7 @@ namespace DeviceAPI.Controllers
                     })
                     .Set(d => d.LastSeenAt, DateTime.UtcNow);
 
-                var result = await _devices.UpdateOneAsync(
-                    d => d.DeviceId == deviceId,
-                    update);
+                var result = await _devices.UpdateOneAsync(d => d.DeviceId == locationUpdate.id, update);
 
                 if (result.MatchedCount == 0)
                 {
@@ -218,7 +250,7 @@ namespace DeviceAPI.Controllers
         }
 
         [HttpPost("status")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateStatus([FromBody] StatusUpdateDto statusUpdate)
         {
             try
@@ -252,7 +284,7 @@ namespace DeviceAPI.Controllers
         }
 
         [HttpGet("firmware")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> CheckFirmwareUpdate()
         {
             try
@@ -263,22 +295,24 @@ namespace DeviceAPI.Controllers
                     return Unauthorized(new { Message = "Invalid token claims" });
                 }
 
-                var device = await _devices.Find(d => d.DeviceId == deviceId)
-                    .Project(d => new { d.FirmwareVersion, d.DeviceId })
-                    .FirstOrDefaultAsync();
-
+                var device = await _devices.Find(d => d.Id == deviceId).FirstOrDefaultAsync();
                 if (device == null)
                 {
                     return NotFound(new { Message = "Device not found" });
+                }
+
+                if(device.FirmwareVersion != device.FirmwareUpdateVersion)
+                {
+                    return BadRequest(new { Message = "Fireware alreay updated" });
                 }
 
                 // In a real implementation, you would check against a firmware repository
                 return Ok(new
                 {
                     CurrentVersion = device.FirmwareVersion,
-                    LatestVersion = "1.2.0", // Example
-                    UpdateAvailable = device.FirmwareVersion != "1.2.0",
-                    UpdateUrl = $"https://firmware.yourdomain.com/{device.DeviceId}/1.2.0"
+                    LatestVersion = device.FirmwareUpdateVersion,
+                    UpdateAvailable = device.FirmwareVersion != device.FirmwareUpdateVersion,
+                    UpdateUrl = $"https://firmware.yourdomain.com/Firmware/{device.Name}/{device.FirmwareUpdateVersion}.bin"
                 });
             }
             catch (Exception ex)
@@ -292,7 +326,7 @@ namespace DeviceAPI.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllDevices([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -331,6 +365,7 @@ namespace DeviceAPI.Controllers
 
     public class LocationUpdateDto
     {
+        public string id { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string? Address { get; set; }

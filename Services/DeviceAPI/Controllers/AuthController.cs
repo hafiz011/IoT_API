@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using DeviceAPI.DbContext;
+using System.Net;
 
 namespace DeviceAPI.Controllers
 {
@@ -14,55 +15,62 @@ namespace DeviceAPI.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly CertificateAuthService _certAuthService;
+        private readonly ICertificateAuthService _certAuthService;
         private readonly JwtService _jwtService;
         private readonly IMongoCollection<Device> _devices;
-        private readonly MongoDbContext _dbContext;
         private readonly ILogger<AuthController> _logger;
 
         public AuthController(
             CertificateAuthService certAuthService,
             JwtService jwtService,
             IMongoDatabase database,
-            MongoDbContext dbContext,
             ILogger<AuthController> logger)
         {
             _certAuthService = certAuthService;
             _jwtService = jwtService;
             _devices = database.GetCollection<Device>("devices");
-            _dbContext = dbContext;
             _logger = logger;
         }
 
 
-        [HttpPost("AuthDevice")]
-        public async Task<IActionResult> AuthenticateDevice()
+        [HttpPost("certificate")]
+        public async Task<IActionResult> AuthenticateWithCertificate()
         {
             try
             {
                 var certificate = await HttpContext.Connection.GetClientCertificateAsync();
                 if (certificate == null)
                 {
-                    _logger.LogWarning("No client certificate presented");
-                    return Unauthorized(new { Message = "Client certificate required" });
+                    return Unauthorized(new ProblemDetails
+                    {
+                        Title = "Certificate required",
+                        Detail = "Client certificate must be provided",
+                        Status = 401
+                    });
                 }
 
-                var device = await _certAuthService.ValidateCertificateAsync(certificate);
+                var device = await _certAuthService.AuthenticateDeviceAsync(certificate);
                 if (device == null)
                 {
-                    return Unauthorized(new { Message = "Invalid certificate or device not registered" });
+                    return Unauthorized(new ProblemDetails
+                    {
+                        Title = "Authentication failed",
+                        Detail = "Invalid certificate or device not registered",
+                        Status = 401
+                    });
                 }
 
                 // Generate JWT
                 var token = _jwtService.GenerateToken(device);
                 var expiryMinutes = _jwtService.GetExpiryMinutes();
-
+                var ipaddress = HttpContext.Connection.RemoteIpAddress.ToString();
                 // Update device with new token
                 var update = Builders<Device>.Update
                     .Set(d => d.Authentication.Token, token)
                     .Set(d => d.Authentication.TokenExpiresAt, DateTime.UtcNow.AddMinutes(expiryMinutes))
                     .Set(d => d.LastSeenAt, DateTime.UtcNow)
-                    .Set(d => d.Status, DeviceStatus.Online);
+                    .Set(d => d.Status, DeviceStatus.Online)
+                    .Set(d => d.IpAddress, ipaddress);
 
                 await _devices.UpdateOneAsync(d => d.Id == device.Id, update);
 
@@ -72,7 +80,8 @@ namespace DeviceAPI.Controllers
                 {
                     Token = token,
                     ExpiresIn = expiryMinutes * 60,
-                    DeviceId = device.DeviceId
+                    DeviceId = device.DeviceId,
+                    Thumbprint = certificate.Thumbprint
                 });
             }
             catch (Exception ex)
@@ -82,33 +91,34 @@ namespace DeviceAPI.Controllers
             }
         }
 
+     
+
         [HttpPost("validate")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult ValidateToken()
         {
-            try
+            var deviceId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var expiry = User.FindFirstValue(JwtRegisteredClaimNames.Exp);
+
+            if (string.IsNullOrEmpty(deviceId))
             {
-                var deviceId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var expiry = User.FindFirstValue(JwtRegisteredClaimNames.Exp);
-
-                if (string.IsNullOrEmpty(deviceId))
+                return Unauthorized(new ProblemDetails
                 {
-                    return Unauthorized(new { Message = "Invalid token claims" });
-                }
-
-                return Ok(new
-                {
-                    DeviceId = deviceId,
-                    IsValid = true,
-                    Expires = expiry
+                    Title = "Invalid token",
+                    Detail = "Token does not contain required claims",
+                    Status = 401
                 });
             }
-            catch (Exception ex)
+
+            return Ok(new
             {
-                _logger.LogError(ex, "Token validation failed");
-                return StatusCode(500, new { Message = "Internal server error" });
-            }
+                DeviceId = deviceId,
+                IsValid = true,
+                Expires = expiry
+            });
         }
+
+
 
         [HttpPost("refresh")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -131,19 +141,21 @@ namespace DeviceAPI.Controllers
                 // Generate new JWT
                 var token = _jwtService.GenerateToken(device);
                 var expiryMinutes = _jwtService.GetExpiryMinutes();
-
+                var ipaddress = HttpContext.Connection.RemoteIpAddress.ToString();
                 // Update device with new token
                 var update = Builders<Device>.Update
                     .Set(d => d.Authentication.Token, token)
                     .Set(d => d.Authentication.TokenExpiresAt, DateTime.UtcNow.AddMinutes(expiryMinutes))
-                    .Set(d => d.LastSeenAt, DateTime.UtcNow);
+                    .Set(d => d.LastSeenAt, DateTime.UtcNow)
+                    .Set(d => d.IpAddress, ipaddress);
 
                 await _devices.UpdateOneAsync(d => d.Id == device.Id, update);
 
                 return Ok(new
                 {
                     Token = token,
-                    ExpiresIn = expiryMinutes * 60
+                    ExpiresIn = expiryMinutes * 60,
+                    DeviceId = device.DeviceId
                 });
             }
             catch (Exception ex)
@@ -152,6 +164,7 @@ namespace DeviceAPI.Controllers
                 return StatusCode(500, new { Message = "Internal server error" });
             }
         }
+
 
     }
 } 
