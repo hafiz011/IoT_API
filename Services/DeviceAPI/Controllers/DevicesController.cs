@@ -1,4 +1,5 @@
-﻿using DeviceAPI.Models;
+﻿using DeviceAPI.Authentication;
+using DeviceAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
@@ -8,16 +9,20 @@ namespace DeviceAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class DevicesController : ControllerBase
     {
         private readonly IMongoCollection<Device> _devices;
         private readonly ILogger<DevicesController> _logger;
+        private readonly CertificateAuthService _certAuthService;
 
-        public DevicesController(IMongoDatabase database, ILogger<DevicesController> logger)
+        public DevicesController(IMongoDatabase database,
+            ILogger<DevicesController> logger,
+            CertificateAuthService certAuthService)
         {
             _devices = database.GetCollection<Device>("devices");
             _logger = logger;
+            _certAuthService = certAuthService;
         }
 
 
@@ -32,6 +37,7 @@ namespace DeviceAPI.Controllers
             public string MacAddress { get; set; }
         }
 
+        //register device 
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> RegisterDevice([FromBody] DeviceRegistrationDto dto)
@@ -71,6 +77,7 @@ namespace DeviceAPI.Controllers
         }
 
 
+        // get device info
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDevice(string id)
         {
@@ -83,14 +90,43 @@ namespace DeviceAPI.Controllers
                 }
 
                 // Sanitize sensitive data before returning
-                device.Authentication.Credentials = null;
-                device.Authentication.EncryptedPrivateKey = null;
+                if (device.Authentication != null)
+                {
+                    device.Authentication.Credentials = null;
+                    device.Authentication.EncryptedPrivateKey = null;
+                }
 
                 return Ok(device);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting device {Id}", id);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+
+        // Create certificate
+        [HttpPost("CreateCertificate/{id}")]
+        public async Task<IActionResult> CreateCertificate(string id)
+        {
+            try
+            {
+                var device = await _devices.Find(d => d.DeviceId == id).FirstOrDefaultAsync();
+                if (device == null)
+                {
+                    return NotFound(new { Message = $"Device with ID {id} not found" });
+                }
+                if (device.Authentication.Credentials != null)
+                {
+                    return BadRequest(new { Message = $"Device alredy have a Certificate" });
+                }
+                var result = await _certAuthService.CreateCertificateAsync(device);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating certificate for device {Id}", id);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -108,39 +144,39 @@ namespace DeviceAPI.Controllers
 
 
 
+        //[HttpGet("me")]
+        //public async Task<IActionResult> GetCurrentDevice()
+        //{
+        //    try
+        //    {
+        //        var deviceId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //        if (string.IsNullOrEmpty(deviceId))
+        //        {
+        //            return Unauthorized(new { Message = "Invalid token claims" });
+        //        }
+
+        //        var device = await _devices.Find(d => d.DeviceId == deviceId)
+        //            .Project<Device>(Builders<Device>.Projection
+        //                .Exclude(d => d.Authentication.Credentials)
+        //                .Exclude(d => d.Authentication.EncryptedPrivateKey))
+        //            .FirstOrDefaultAsync();
+
+        //        if (device == null)
+        //        {
+        //            return NotFound(new { Message = "Device not found" });
+        //        }
+
+        //        return Ok(device);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Failed to get device information");
+        //        return StatusCode(500, new { Message = "Internal server error" });
+        //    }
+        //}
 
 
-        [HttpGet("me")]
-        public async Task<IActionResult> GetCurrentDevice()
-        {
-            try
-            {
-                var deviceId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(deviceId))
-                {
-                    return Unauthorized(new { Message = "Invalid token claims" });
-                }
-
-                var device = await _devices.Find(d => d.DeviceId == deviceId)
-                    .Project<Device>(Builders<Device>.Projection
-                        .Exclude(d => d.Authentication.Credentials)
-                        .Exclude(d => d.Authentication.EncryptedPrivateKey))
-                    .FirstOrDefaultAsync();
-
-                if (device == null)
-                {
-                    return NotFound(new { Message = "Device not found" });
-                }
-
-                return Ok(device);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get device information");
-                return StatusCode(500, new { Message = "Internal server error" });
-            }
-        }
-
+        // update device location and address
         [HttpPost("location")]
         [Authorize]
         public async Task<IActionResult> UpdateLocation([FromBody] LocationUpdateDto locationUpdate)

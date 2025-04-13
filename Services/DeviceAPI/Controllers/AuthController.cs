@@ -35,7 +35,7 @@ namespace DeviceAPI.Controllers
         }
 
 
-        [HttpPost("device")]
+        [HttpPost("AuthDevice")]
         public async Task<IActionResult> AuthenticateDevice()
         {
             try

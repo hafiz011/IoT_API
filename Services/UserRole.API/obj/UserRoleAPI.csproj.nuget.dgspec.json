@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Github\\IoT\\Services\\UserRole.API\\UserRoleAPI.csproj": {}
+    "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\UserRoleAPI.csproj": {}
   },
   "projects": {
-    "D:\\Github\\IoT\\Services\\UserRole.API\\UserRoleAPI.csproj": {
+    "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\UserRoleAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Github\\IoT\\Services\\UserRole.API\\UserRoleAPI.csproj",
+        "projectUniqueName": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\UserRoleAPI.csproj",
         "projectName": "UserRoleAPI",
-        "projectPath": "D:\\Github\\IoT\\Services\\UserRole.API\\UserRoleAPI.csproj",
-        "packagesPath": "C:\\Users\\walton\\.nuget\\packages\\",
-        "outputPath": "D:\\Github\\IoT\\Services\\UserRole.API\\obj\\",
+        "projectPath": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\UserRoleAPI.csproj",
+        "packagesPath": "C:\\Users\\Hafiz\\.nuget\\packages\\",
+        "outputPath": "D:\\GitHub\\IoT_API\\src\\Services\\UserRole.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\walton\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Hafiz\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -35,11 +34,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -90,7 +84,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

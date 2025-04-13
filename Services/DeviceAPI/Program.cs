@@ -14,13 +14,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 builder.Services.AddSingleton<MongoDbContext>();
 
-//// Replace the MongoDbContext registration with:
-//builder.Services.AddSingleton<IMongoClient>(sp =>
-//    new MongoClient(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("ConnectionString")));
+// Replace the MongoDbContext registration with:
+builder.Services.AddSingleton<IMongoClient>(sp =>
+    new MongoClient(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("ConnectionString")));
 
-//builder.Services.AddScoped<IMongoDatabase>(sp =>
-//    sp.GetRequiredService<IMongoClient>()
-//     .GetDatabase(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("DatabaseName")));
+builder.Services.AddScoped<IMongoDatabase>(sp =>
+    sp.GetRequiredService<IMongoClient>()
+     .GetDatabase(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("DatabaseName")));
 
 // Add authentication services
 builder.Services.AddAuthentication(options =>
