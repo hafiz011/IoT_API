@@ -37,7 +37,6 @@ D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\MongoDB.Driver.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\SharpCompress.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Snappier.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\ZstdSharp.dll
-D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Certificate.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
@@ -94,3 +93,6 @@ D:\GitHub\IoT_API\src\Services\DeviceAPI\obj\Debug\net8.0\refint\DeviceAPI.dll
 D:\GitHub\IoT_API\src\Services\DeviceAPI\obj\Debug\net8.0\DeviceAPI.pdb
 D:\GitHub\IoT_API\src\Services\DeviceAPI\obj\Debug\net8.0\DeviceAPI.genruntimeconfig.cache
 D:\GitHub\IoT_API\src\Services\DeviceAPI\obj\Debug\net8.0\ref\DeviceAPI.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\DeviceAPI.staticwebassets.runtime.json
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\AspNetCore.Identity.MongoDbCore.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\MongoDbGenericRepository.dll

@@ -1,11 +1,19 @@
 {
   "Version": 1,
-  "Hash": "ghIwdWWbA00b4W8dvH0hiKNwRyqkw2iXdhjWhEt20qQ=",
+  "Hash": "5Djot+pcdXolfX+OzpfdZHh/BXccPcxsi3rKFRf9y+o=",
   "Source": "DeviceAPI",
   "BasePath": "_content/DeviceAPI",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "DeviceAPI\\wwwroot",
+      "Source": "DeviceAPI",
+      "ContentRoot": "D:\\Github\\IoT\\Services\\DeviceAPI\\wwwroot\\",
+      "BasePath": "_content/DeviceAPI",
+      "Pattern": "**"
+    }
+  ],
   "Assets": []
 }

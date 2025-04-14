@@ -1,166 +1,123 @@
-﻿using DeviceAPI.Authentication;
-using DeviceAPI.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using DeviceAPI.Models;
+
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
-using DeviceAPI.DbContext;
-using System.Net;
-
 namespace DeviceAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ICertificateAuthService _certAuthService;
-        private readonly JwtService _jwtService;
+        private readonly UserManager<Device> _userManager;
+        private readonly SignInManager<Device> _signInManager;
+        private readonly RoleManager<DeviceRole> _roleManager;
         private readonly IMongoCollection<Device> _devices;
         private readonly ILogger<AuthController> _logger;
+        private readonly IConfiguration _configuration;
 
         public AuthController(
-            CertificateAuthService certAuthService,
-            JwtService jwtService,
+            UserManager<Device> userManager,
+            SignInManager<Device> signInManager,
+            RoleManager<DeviceRole> roleManager,
             IMongoDatabase database,
-            ILogger<AuthController> logger)
+            ILogger<AuthController> logger,
+            IConfiguration configuration)
         {
-            _certAuthService = certAuthService;
-            _jwtService = jwtService;
             _devices = database.GetCollection<Device>("devices");
             _logger = logger;
+            _configuration = configuration;
         }
 
-
-        [HttpPost("certificate")]
-        public async Task<IActionResult> AuthenticateWithCertificate()
+        public class LoginRequestModel
         {
+            public string deviceId { get; set; }
+            public string Password { get; set; }
+        }
+
+        [HttpPost("devicelogin")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestModel model)
+        {
+
             try
             {
-                var certificate = await HttpContext.Connection.GetClientCertificateAsync();
-                if (certificate == null)
-                {
-                    return Unauthorized(new ProblemDetails
-                    {
-                        Title = "Certificate required",
-                        Detail = "Client certificate must be provided",
-                        Status = 401
-                    });
-                }
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                var device = await _certAuthService.AuthenticateDeviceAsync(certificate);
-                if (device == null)
-                {
-                    return Unauthorized(new ProblemDetails
-                    {
-                        Title = "Authentication failed",
-                        Detail = "Invalid certificate or device not registered",
-                        Status = 401
-                    });
-                }
+                var user = await _userManager.FindByEmailAsync(model.deviceId);
+                if (user == null)
+                    return Unauthorized(new { Message = "Invalid deviceId or password" });
 
-                // Generate JWT
-                var token = _jwtService.GenerateToken(device);
-                var expiryMinutes = _jwtService.GetExpiryMinutes();
-                var ipaddress = HttpContext.Connection.RemoteIpAddress.ToString();
-                // Update device with new token
-                var update = Builders<Device>.Update
-                    .Set(d => d.Authentication.Token, token)
-                    .Set(d => d.Authentication.TokenExpiresAt, DateTime.UtcNow.AddMinutes(expiryMinutes))
-                    .Set(d => d.LastSeenAt, DateTime.UtcNow)
-                    .Set(d => d.Status, DeviceStatus.Online)
-                    .Set(d => d.IpAddress, ipaddress);
+                if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
+                    return Unauthorized(new { Message = "Invalid deviceId or password" });
 
-                await _devices.UpdateOneAsync(d => d.Id == device.Id, update);
+                if (user.LockoutEnd.HasValue && user.LockoutEnd > DateTime.UtcNow)
+                    return Unauthorized(new { Message = "Your deviceId is locked. Please try again later." });
 
-                _logger.LogInformation("Device {DeviceId} authenticated successfully", device.DeviceId);
+                var roles = await _userManager.GetRolesAsync(user);
+                var role = roles.Count > 0 ? roles[0] : "Device";
+
+                var token = JwtTokenHelper.GenerateToken(user.Id.ToString(), role, _configuration["JwtSettings:Key"], _configuration["JwtSettings:Issuer"], _configuration["JwtSettings:Audience"]);
+                _logger.LogInformation($"User {user.Email} successfully logged in.");
 
                 return Ok(new
                 {
                     Token = token,
-                    ExpiresIn = expiryMinutes * 60,
-                    DeviceId = device.DeviceId,
-                    Thumbprint = certificate.Thumbprint
+                    User = new
+                    {
+                        user.Id,
+                        user.DeviceId,
+                    }
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Device authentication failed");
-                return StatusCode(500, new { Message = "Internal server error" });
+                return StatusCode(500, new { Message = "An unexpected error occurred. Please try again later." });
             }
         }
 
-     
-
-        [HttpPost("validate")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult ValidateToken()
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
         {
-            var deviceId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var expiry = User.FindFirstValue(JwtRegisteredClaimNames.Exp);
-
-            if (string.IsNullOrEmpty(deviceId))
-            {
-                return Unauthorized(new ProblemDetails
-                {
-                    Title = "Invalid token",
-                    Detail = "Token does not contain required claims",
-                    Status = 401
-                });
-            }
-
-            return Ok(new
-            {
-                DeviceId = deviceId,
-                IsValid = true,
-                Expires = expiry
-            });
+            await _signInManager.SignOutAsync();
+            return Ok(new { Message = "Logged out successfully." });
         }
 
 
+        public class StatusUpdateDto
+        {
+            public DeviceStatus Status { get; set; }
+        }
 
-        [HttpPost("refresh")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> RefreshToken()
+        [HttpPost("status")]
+        //[Authorize]
+        public async Task<IActionResult> UpdateStatus([FromBody] StatusUpdateDto statusUpdate)
         {
             try
             {
-                var deviceId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(deviceId))
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Message = "User not authenticated." });
+
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                    return NotFound(new { Message = "User not found." });
+
+                user.Status = statusUpdate.Status;
+                user.LastSeenAt = DateTime.UtcNow;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
                 {
-                    return Unauthorized(new { Message = "Invalid token claims" });
+                    return BadRequest(new { Message = "Failed to update status." });
                 }
 
-                var device = await _devices.Find(d => d.DeviceId == deviceId).FirstOrDefaultAsync();
-                if (device == null)
-                {
-                    return NotFound(new { Message = "Device not found" });
-                }
-
-                // Generate new JWT
-                var token = _jwtService.GenerateToken(device);
-                var expiryMinutes = _jwtService.GetExpiryMinutes();
-                var ipaddress = HttpContext.Connection.RemoteIpAddress.ToString();
-                // Update device with new token
-                var update = Builders<Device>.Update
-                    .Set(d => d.Authentication.Token, token)
-                    .Set(d => d.Authentication.TokenExpiresAt, DateTime.UtcNow.AddMinutes(expiryMinutes))
-                    .Set(d => d.LastSeenAt, DateTime.UtcNow)
-                    .Set(d => d.IpAddress, ipaddress);
-
-                await _devices.UpdateOneAsync(d => d.Id == device.Id, update);
-
-                return Ok(new
-                {
-                    Token = token,
-                    ExpiresIn = expiryMinutes * 60,
-                    DeviceId = device.DeviceId
-                });
+                return NoContent();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Token refresh failed");
+                _logger.LogError(ex, "Failed to update device status");
                 return StatusCode(500, new { Message = "Internal server error" });
             }
         }

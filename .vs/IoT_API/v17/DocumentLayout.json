@@ -3,28 +3,8 @@
   "WorkspaceRootPath": "D:\\Github\\IoT\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|d:\\github\\iot\\services\\deviceapi\\authentication\\jwtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|solutionrelative:services\\deviceapi\\authentication\\jwtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|d:\\github\\iot\\services\\deviceapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|solutionrelative:services\\deviceapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|d:\\github\\iot\\services\\deviceapi\\controller\\devicescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|solutionrelative:services\\deviceapi\\controller\\devicescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|d:\\github\\iot\\services\\deviceapi\\controller\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|solutionrelative:services\\deviceapi\\controller\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|d:\\github\\iot\\services\\deviceapi\\models\\device.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|solutionrelative:services\\deviceapi\\models\\device.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|d:\\github\\iot\\services\\deviceapi\\authentication\\certificateauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|solutionrelative:services\\deviceapi\\authentication\\certificateauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|d:\\github\\iot\\services\\deviceapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{478E8B3D-2047-4C9D-A108-6B9C42D20688}|Services\\DeviceAPI\\DeviceAPI.csproj|solutionrelative:services\\deviceapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -63,79 +43,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "JwtService.cs",
-              "DocumentMoniker": "D:\\Github\\IoT\\Services\\DeviceAPI\\Authentication\\JwtService.cs",
-              "RelativeDocumentMoniker": "Services\\DeviceAPI\\Authentication\\JwtService.cs",
-              "ToolTip": "D:\\Github\\IoT\\Services\\DeviceAPI\\Authentication\\JwtService.cs",
-              "RelativeToolTip": "Services\\DeviceAPI\\Authentication\\JwtService.cs",
-              "ViewState": "AQIAABkAAAAAAAAAAIAwwB8AAAAyAAAA",
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Github\\IoT\\Services\\DeviceAPI\\Program.cs",
+              "RelativeDocumentMoniker": "Services\\DeviceAPI\\Program.cs",
+              "ToolTip": "D:\\Github\\IoT\\Services\\DeviceAPI\\Program.cs",
+              "RelativeToolTip": "Services\\DeviceAPI\\Program.cs",
+              "ViewState": "AQIAAAgAAAAAAAAAAAAAABkAAAAxAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-12T18:36:01.101Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\Github\\IoT\\Services\\DeviceAPI\\appsettings.json",
-              "RelativeDocumentMoniker": "Services\\DeviceAPI\\appsettings.json",
-              "ToolTip": "D:\\Github\\IoT\\Services\\DeviceAPI\\appsettings.json",
-              "RelativeToolTip": "Services\\DeviceAPI\\appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-04-12T16:27:09.599Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Device.cs",
-              "DocumentMoniker": "D:\\Github\\IoT\\Services\\DeviceAPI\\Models\\Device.cs",
-              "RelativeDocumentMoniker": "Services\\DeviceAPI\\Models\\Device.cs",
-              "ToolTip": "D:\\Github\\IoT\\Services\\DeviceAPI\\Models\\Device.cs",
-              "RelativeToolTip": "Services\\DeviceAPI\\Models\\Device.cs",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAqwA4AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-12T15:07:12.533Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "D:\\Github\\IoT\\Services\\DeviceAPI\\Controller\\AuthController.cs",
-              "RelativeDocumentMoniker": "Services\\DeviceAPI\\Controller\\AuthController.cs",
-              "ToolTip": "D:\\Github\\IoT\\Services\\DeviceAPI\\Controller\\AuthController.cs",
-              "RelativeToolTip": "Services\\DeviceAPI\\Controller\\AuthController.cs",
-              "ViewState": "AQIAABYAAAAAAAAAAAAxwCIAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-12T14:04:18.736Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DevicesController.cs",
-              "DocumentMoniker": "D:\\Github\\IoT\\Services\\DeviceAPI\\Controller\\DevicesController.cs",
-              "RelativeDocumentMoniker": "Services\\DeviceAPI\\Controller\\DevicesController.cs",
-              "ToolTip": "D:\\Github\\IoT\\Services\\DeviceAPI\\Controller\\DevicesController.cs",
-              "RelativeToolTip": "Services\\DeviceAPI\\Controller\\DevicesController.cs",
-              "ViewState": "AQIAAOQAAAAAAAAAAAAiwPQAAABaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-12T14:04:06.28Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CertificateAuthService.cs",
-              "DocumentMoniker": "D:\\Github\\IoT\\Services\\DeviceAPI\\Authentication\\CertificateAuthService.cs",
-              "RelativeDocumentMoniker": "Services\\DeviceAPI\\Authentication\\CertificateAuthService.cs",
-              "ToolTip": "D:\\Github\\IoT\\Services\\DeviceAPI\\Authentication\\CertificateAuthService.cs",
-              "RelativeToolTip": "Services\\DeviceAPI\\Authentication\\CertificateAuthService.cs",
-              "ViewState": "AQIAAFYAAAAAAAAAAAAQwDsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-12T12:56:43.031Z",
+              "WhenOpened": "2025-04-14T12:31:50.807Z",
               "EditorCaption": ""
             }
           ]
