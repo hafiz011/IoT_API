@@ -29,7 +29,7 @@ namespace DeviceAPI.Controllers
         {
             try
             {
-                var device = await _userManager.FindByEmailAsync(deviceId);
+                var device = await _userManager.FindByNameAsync(deviceId);
                 if (device == null)
                 {
                     return NotFound();
@@ -52,7 +52,7 @@ namespace DeviceAPI.Controllers
         {
             try
             {
-                var device = await _userManager.FindByEmailAsync(locationUpdate.id);
+                var device = await _userManager.FindByNameAsync(locationUpdate.id);
                 if (device.DeviceId == null)
                 {
                     return NotFound();
@@ -88,7 +88,7 @@ namespace DeviceAPI.Controllers
                 if (string.IsNullOrEmpty(deviceId))
                     return Unauthorized(new { Message = "User not authenticated." });
 
-                var device = await _userManager.FindByEmailAsync(deviceId);
+                var device = await _userManager.FindByNameAsync(deviceId);
                 if (device == null)
                     return NotFound(new { Message = "User not found." });
 

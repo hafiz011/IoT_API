@@ -45,7 +45,7 @@ namespace DeviceAPI.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var user = await _userManager.FindByEmailAsync(model.deviceId);
+                var user = await _userManager.FindByNameAsync(model.deviceId);
                 if (user == null)
                     return Unauthorized(new { Message = "Invalid deviceId or password" });
 

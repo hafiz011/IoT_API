@@ -26,12 +26,12 @@ builder.Services.AddIdentity<Device, DeviceRole>(identityOptions =>
     identityOptions.Password.RequireDigit = true;
     identityOptions.Password.RequiredLength = 6;
     identityOptions.Password.RequireNonAlphanumeric = false;
-    identityOptions.Password.RequireUppercase = true;
-    identityOptions.Password.RequireLowercase = true;
+    identityOptions.Password.RequireUppercase = false;
+    identityOptions.Password.RequireLowercase = false;
     identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     identityOptions.Lockout.MaxFailedAccessAttempts = 5;
-    identityOptions.Lockout.AllowedForNewUsers = true;
-    identityOptions.User.RequireUniqueEmail = true;
+    identityOptions.Lockout.AllowedForNewUsers = false;
+    identityOptions.User.RequireUniqueEmail = false;
 })
 .AddMongoDbStores<Device, DeviceRole, Guid>(
     builder.Configuration["MongoDbSettings:ConnectionString"],

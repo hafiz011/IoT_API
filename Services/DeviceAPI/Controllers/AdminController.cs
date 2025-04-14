@@ -48,14 +48,15 @@ namespace DeviceAPI.Controllers
             try
             {
                 dto.DeviceId = Guid.NewGuid().ToString();
-                var existingUser = await _userManager.FindByEmailAsync(dto.DeviceId);
+
+                var existingUser = await _userManager.FindByNameAsync(dto.DeviceId);
                 if (existingUser != null)
-                    return BadRequest(new { Message = "Device already in use" });
+                    return BadRequest(new { Message = "Device already exists" });
 
                 var data = new Device
                 {
                     DeviceId = dto.DeviceId,
-                    Email = dto.DeviceId,
+                    UserName = dto.DeviceId, // Use DeviceId as username
                     Name = dto.Name,
                     FirmwareVersion = dto.FirmwareVersion,
                     HardwareVersion = dto.HardwareVersion,
@@ -66,42 +67,40 @@ namespace DeviceAPI.Controllers
                     CreatedAt = DateTime.UtcNow
                 };
 
+                // Use a simple default password (example: "1234" or anything else)
                 var result = await _userManager.CreateAsync(data, dto.password);
                 if (!result.Succeeded)
-                    return BadRequest(new { Message = "User registration failed", Errors = result.Errors });
+                    return BadRequest(new { Message = "Device registration failed", Errors = result.Errors });
 
+                // Assign default role
                 const string defaultRole = "Device";
-
-                var roleExists = await _roleManager.RoleExistsAsync(defaultRole);
-                if (!roleExists)
+                if (!await _roleManager.RoleExistsAsync(defaultRole))
                 {
                     var roleResult = await _roleManager.CreateAsync(new DeviceRole { Name = defaultRole });
                     if (!roleResult.Succeeded)
-                    {
-                        return BadRequest(new { Message = "Failed to create default role", Errors = roleResult.Errors });
-                    }
+                        return BadRequest(new { Message = "Role creation failed", Errors = roleResult.Errors });
                 }
 
                 await _userManager.AddToRoleAsync(data, defaultRole);
 
-                _logger.LogInformation("Device {DeviceId} registered successfully", dto.DeviceId);
-                return Ok(new { Message = "Device registered successfully!" });
+                _logger.LogInformation("Device {DeviceId} registered", dto.DeviceId);
+                return Ok(new { Message = "Device registered successfully!", DeviceId = dto.DeviceId });
             }
             catch (Exception ex)
             {
-
-                _logger.LogError(ex, "Error registering device");
+                _logger.LogError(ex, "Device registration error");
                 return StatusCode(500, "Internal server error");
             }
         }
 
+
         // get device info
-        [HttpGet("GetDevice/{deviceId}")]
-        public async Task<IActionResult> GetDevice(string deviceId)
+        [HttpGet("GetDevice")]
+        public async Task<IActionResult> GetDevice([FromQuery] string deviceId)
         {
             try
             {
-                var device = await _userManager.FindByEmailAsync(deviceId);
+                var device = await _userManager.FindByNameAsync(deviceId);
                 if (device == null)
                 {
                     return NotFound();
@@ -119,16 +118,17 @@ namespace DeviceAPI.Controllers
 
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllDevices([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
                 if (page < 1) page = 1;
                 if (pageSize < 1) pageSize = 10;
-                var totalCount = await _userManager.Users.CountAsync();
 
-                var devices = await _userManager.Users
+                var totalCount = _userManager.Users.Count();
+
+                var devices = _userManager.Users
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .Select(d => new
@@ -139,7 +139,7 @@ namespace DeviceAPI.Controllers
                         d.Status,
                         d.LastSeenAt
                     })
-                    .ToListAsync();
+                    .ToList(); // Sync if async not supported
 
                 return Ok(new
                 {

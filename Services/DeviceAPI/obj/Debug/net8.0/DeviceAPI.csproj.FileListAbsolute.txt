@@ -96,3 +96,10 @@ D:\GitHub\IoT_API\src\Services\DeviceAPI\obj\Debug\net8.0\ref\DeviceAPI.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\DeviceAPI.staticwebassets.runtime.json
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\AspNetCore.Identity.MongoDbCore.dll
 D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\MongoDbGenericRepository.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\AWSSDK.Core.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\AWSSDK.SecurityToken.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\MongoDB.Driver.Core.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\MongoDB.Libmongocrypt.dll
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\runtimes\linux\native\libmongocrypt.so
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\runtimes\osx\native\libmongocrypt.dylib
+D:\Github\IoT\Services\DeviceAPI\bin\Debug\net8.0\runtimes\win\native\mongocrypt.dll
