@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{03
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserRoleAPI", "Services\UserRole.API\UserRoleAPI.csproj", "{C556F451-3BF0-457A-8222-B2775BB57CEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceAPI", "Services\DeviceAPI\DeviceAPI.csproj", "{478E8B3D-2047-4C9D-A108-6B9C42D20688}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceAPI", "Services\DeviceAPI\DeviceAPI.csproj", "{478E8B3D-2047-4C9D-A108-6B9C42D20688}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

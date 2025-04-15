@@ -1,6 +1,8 @@
 ﻿using DeviceAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 
 namespace DeviceAPI.Controllers
@@ -101,7 +103,6 @@ namespace DeviceAPI.Controllers
                     return BadRequest(new { Message = "Fireware alreay updated" });
                 }
 
-                // In a real implementation, you would check against a firmware repository
                 return Ok(new
                 {
                     CurrentVersion = device.FirmwareVersion,
@@ -116,7 +117,32 @@ namespace DeviceAPI.Controllers
             }
         }
 
+
+        [HttpGet("status")]
+        public async Task<IActionResult> UpdateStatus([FromQuery] string deviceId)
+        {
+            try
+            {
+                var user = await _userManager.FindByNameAsync(deviceId);
+                if (user == null)
+                    return NotFound(new { Message = "Device not found." });
+
+                return Ok(new {status = user.Status, deviceId = user.DeviceId, Massage = $"Device is {user.Status}"});
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to show device status");
+                return StatusCode(500, new { Message = "Internal server error" });
+            }
+        }
+
+
+
+
+
     }
+
+
 
     public class LocationUpdateDto
     {

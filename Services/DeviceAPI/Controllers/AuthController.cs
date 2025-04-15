@@ -83,43 +83,6 @@ namespace DeviceAPI.Controllers
         }
 
 
-        public class StatusUpdateDto
-        {
-            public DeviceStatus Status { get; set; }
-        }
-
-        [HttpPost("status")]
-        [Authorize]
-        public async Task<IActionResult> UpdateStatus([FromBody] StatusUpdateDto statusUpdate)
-        {
-            try
-            {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                    return Unauthorized(new { Message = "User not authenticated." });
-
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user == null)
-                    return NotFound(new { Message = "User not found." });
-
-                user.Status = statusUpdate.Status;
-                user.LastSeenAt = DateTime.UtcNow;
-
-                var result = await _userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    return BadRequest(new { Message = "Failed to update status." });
-                }
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to update device status");
-                return StatusCode(500, new { Message = "Internal server error" });
-            }
-        }
-
         [HttpGet("firmware")]
         [Authorize]
         public async Task<IActionResult> CheckFirmwareUpdate()
@@ -152,6 +115,8 @@ namespace DeviceAPI.Controllers
                 return StatusCode(500, new { Message = "Internal server error" });
             }
         }
+
+
 
 
     }
