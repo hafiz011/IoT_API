@@ -13,8 +13,6 @@ namespace DeviceAPI.DbContext
             _database = client.GetDatabase(settings.Value.DatabaseName);
         }
 
-        public IMongoCollection<Device> Devices => _database.GetCollection<Device>("devices");
-
         public IMongoCollection<DeviceType> DeviceTypes => _database.GetCollection<DeviceType>("device_Types");
         public IMongoCollection<DeviceGroup> DeviceGroups => _database.GetCollection<DeviceGroup>("device_Groups");
         public IMongoCollection<DeviceShadow> DeviceShadows => _database.GetCollection<DeviceShadow>("device_Shadows");

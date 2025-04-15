@@ -1,12 +1,10 @@
-using DeviceAPI.Authentication;
 using DeviceAPI.DbContext;
-using Microsoft.AspNetCore.Authentication.Certificate;
+using DeviceAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,67 +12,56 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 builder.Services.AddSingleton<MongoDbContext>();
 
-// Replace the MongoDbContext registration with:
-builder.Services.AddSingleton<IMongoClient>(sp =>
-    new MongoClient(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("ConnectionString")));
+//// Replace the MongoDbContext registration with:
+//builder.Services.AddSingleton<IMongoClient>(sp =>
+//    new MongoClient(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("ConnectionString")));
 
-builder.Services.AddScoped<IMongoDatabase>(sp =>
-    sp.GetRequiredService<IMongoClient>()
-     .GetDatabase(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("DatabaseName")));
+//builder.Services.AddScoped<IMongoDatabase>(sp =>
+//    sp.GetRequiredService<IMongoClient>()
+//     .GetDatabase(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("DatabaseName")));
 
-// Add certificate services
-builder.Services.Configure<CertificateSettings>(builder.Configuration.GetSection("CertificateSettings"));
-builder.Services.AddScoped<ICertificateAuthService, CertificateAuthService>();
 
-// Add authentication services
+builder.Services.AddIdentity<Device, DeviceRole>(identityOptions =>
+{
+    identityOptions.Password.RequireDigit = true;
+    identityOptions.Password.RequiredLength = 6;
+    identityOptions.Password.RequireNonAlphanumeric = false;
+    identityOptions.Password.RequireUppercase = false;
+    identityOptions.Password.RequireLowercase = false;
+    identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    identityOptions.Lockout.MaxFailedAccessAttempts = 5;
+    identityOptions.Lockout.AllowedForNewUsers = false;
+    identityOptions.User.RequireUniqueEmail = false;
+})
+.AddMongoDbStores<Device, DeviceRole, Guid>(
+    builder.Configuration["MongoDbSettings:ConnectionString"],
+    builder.Configuration["MongoDbSettings:DatabaseName"])
+.AddDefaultTokenProviders();
+
+// Add Authentication using JWT
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = "Hybrid";
-    options.DefaultChallengeScheme = "Hybrid";
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-
-//.AddCertificate("Certificate", options =>
-//{
-//    options.AllowedCertificateTypes = CertificateTypes.All;
-//    options.RevocationMode = X509RevocationMode.NoCheck; // Set to Online for production
-//})
-
-.AddCertificate("Certificate", options =>
+.AddJwtBearer(options =>
 {
-    options.AllowedCertificateTypes = CertificateTypes.All;
-    options.RevocationMode = X509RevocationMode.Online; // For production
-})
-.AddJwtBearer("JWT", options =>
-{
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidateIssuer = true,
+        ValidateAudience = true,
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
-    };
-})
-.AddPolicyScheme("Hybrid", "Hybrid", options =>
-{
-    options.ForwardDefaultSelector = context =>
-    {
-        var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
-        if (authHeader?.StartsWith("Bearer ") == true)
-            return "JWT";
-
-        if (context.Connection.ClientCertificate != null)
-            return "Certificate";
-
-        return "JWT"; // Fallback
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
     };
 });
 
-// Register services
-builder.Services.AddScoped<CertificateAuthService>();
-builder.Services.AddScoped<JwtService>();
+
+
+
 
 
 builder.Services.AddControllers();

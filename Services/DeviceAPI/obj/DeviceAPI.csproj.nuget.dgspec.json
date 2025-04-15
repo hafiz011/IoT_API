@@ -40,17 +40,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "Microsoft.AspNetCore.Authentication.Certificate": {
+            "AspNetCore.Identity.MongoDbCore": {
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[6.0.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[8.0.0, )"
             },
-            "MongoDB.Driver": {
+            "MongoDB.Driver.Core": {
               "target": "Package",
-              "version": "[3.3.0, )"
+              "version": "[2.30.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
