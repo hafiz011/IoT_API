@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace DeviceAPI.Controllers
 {
@@ -21,6 +22,18 @@ namespace DeviceAPI.Controllers
         {
             _repository = repository;
             _logger = logger;
+        }
+
+        public class DeviceTypeCreateDto
+        {
+            [BsonId]
+            [BsonRepresentation(BsonType.ObjectId)]
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public string Manufacturer { get; set; }
+            public string ModelNumber { get; set; }
+            public Dictionary<string, object> Capabilities { get; set; } = new();
         }
 
         [HttpPost("Create")]
@@ -95,7 +108,7 @@ namespace DeviceAPI.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> Update(string id, [FromBody] DeviceTypeUpdateDto dto)
+        public async Task<IActionResult> Update(string id, DeviceType dto)
         {
             try
             {
@@ -150,25 +163,6 @@ namespace DeviceAPI.Controllers
                 _logger.LogError(ex, "Error deleting device type with ID {Id}", id);
                 return StatusCode(500, "Internal server error");
             }
-        }
-
-
-        public class DeviceTypeCreateDto
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public string Manufacturer { get; set; }
-            public string ModelNumber { get; set; }
-            public BsonDocument Capabilities { get; set; }
-        }
-
-        public class DeviceTypeUpdateDto
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public string Manufacturer { get; set; }
-            public string ModelNumber { get; set; }
-            public BsonDocument Capabilities { get; set; }
         }
 
     }

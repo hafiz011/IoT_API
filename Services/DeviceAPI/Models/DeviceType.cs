@@ -11,6 +11,7 @@ namespace DeviceAPI.Models
         public string Description { get; set; }
         public string Manufacturer { get; set; }
         public string ModelNumber { get; set; }
-        public BsonDocument Capabilities { get; set; } // Flexible schema for capabilities
+        public Dictionary<string, object> Capabilities { get; set; }
+
     }
 }
