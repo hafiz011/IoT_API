@@ -172,7 +172,7 @@ namespace DeviceAPI.Controllers
         /// <param name="groupId">ID of the group to delete</param>
         /// <returns></returns>
         [HttpDelete("delete")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Delete([FromQuery] string groupId)
