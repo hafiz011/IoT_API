@@ -2,6 +2,7 @@ using DeviceAPI.DbContext;
 using DeviceAPI.Models;
 using DeviceAPI.Repository.Implementation;
 using DeviceAPI.Repository.Interface;
+using DeviceAPI.Repository.Repo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -63,6 +64,7 @@ builder.Services.AddAuthentication(options =>
 
 
 builder.Services.AddScoped<IDeviceGroupRepository, DeviceGroupRepository>();
+builder.Services.AddScoped<IDeviceTypeRepository, DeviceTypeRepository>();
 
 
 

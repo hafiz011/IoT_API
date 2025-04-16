@@ -21,8 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\Interface\" />
-    <Folder Include="Repository\Repo\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
