@@ -13,11 +13,11 @@ namespace DeviceAPI.DbContext
             _database = client.GetDatabase(settings.Value.DatabaseName);
         }
 
-        public IMongoCollection<DeviceType> DeviceTypes => _database.GetCollection<DeviceType>("device_Types");
-        public IMongoCollection<DeviceGroup> DeviceGroups => _database.GetCollection<DeviceGroup>("device_Groups");
-        public IMongoCollection<DeviceShadow> DeviceShadows => _database.GetCollection<DeviceShadow>("device_Shadows");
-        public IMongoCollection<Firmware> Firmwares => _database.GetCollection<Firmware>("firmwares");
-        public IMongoCollection<FirmwareUpdate> FirmwareUpdates => _database.GetCollection<FirmwareUpdate>("firmware_Updates");
+        public IMongoCollection<DeviceType> DeviceTypes => _database.GetCollection<DeviceType>("IoT_Device_Types");
+        public IMongoCollection<DeviceGroup> DeviceGroups => _database.GetCollection<DeviceGroup>("IoT_Device_Groups");
+        public IMongoCollection<DeviceShadow> DeviceShadows => _database.GetCollection<DeviceShadow>("IoT_Device_Shadows");
+        public IMongoCollection<Firmware> Firmwares => _database.GetCollection<Firmware>("Firmwares");
+        public IMongoCollection<FirmwareUpdate> FirmwareUpdates => _database.GetCollection<FirmwareUpdate>("Firmware_Updates");
 
     }
 

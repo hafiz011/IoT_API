@@ -1,5 +1,7 @@
 using DeviceAPI.DbContext;
 using DeviceAPI.Models;
+using DeviceAPI.Repository.Implementation;
+using DeviceAPI.Repository.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -12,13 +14,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 builder.Services.AddSingleton<MongoDbContext>();
 
-//// Replace the MongoDbContext registration with:
-//builder.Services.AddSingleton<IMongoClient>(sp =>
-//    new MongoClient(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("ConnectionString")));
+// Replace the MongoDbContext registration with:
+builder.Services.AddSingleton<IMongoClient>(sp =>
+    new MongoClient(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("ConnectionString")));
 
-//builder.Services.AddScoped<IMongoDatabase>(sp =>
-//    sp.GetRequiredService<IMongoClient>()
-//     .GetDatabase(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("DatabaseName")));
+builder.Services.AddScoped<IMongoDatabase>(sp =>
+    sp.GetRequiredService<IMongoClient>()
+     .GetDatabase(builder.Configuration.GetSection("MongoDbSettings").GetValue<string>("DatabaseName")));
 
 
 builder.Services.AddIdentity<Device, DeviceRole>(identityOptions =>
@@ -59,6 +61,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+
+builder.Services.AddScoped<IDeviceGroupRepository, DeviceGroupRepository>();
 
 
 

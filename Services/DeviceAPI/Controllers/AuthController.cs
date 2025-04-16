@@ -1,5 +1,4 @@
 ﻿using DeviceAPI.Models;
-
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Microsoft.AspNetCore.Identity;

@@ -9,6 +9,7 @@ namespace DeviceAPI.Models
     {
         public string DeviceId { get; set; }
         public string Name { get; set; }
+        public string DeviceTypeId { get; set; }
         public string FirmwareVersion { get; set; }
         public string FirmwareUpdateVersion { get; set; }
         public string HardwareVersion { get; set; }
